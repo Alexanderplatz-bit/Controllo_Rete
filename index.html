@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Port Scanner Pro Web</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-color: #238636;
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
+            --console-bg: #010409;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            color: #58a6ff;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        p.desc {
+            text-align: center;
+            color: #8b949e;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--console-bg);
+            color: #fff;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #2ea043;
+        }
+
+        button:disabled {
+            background-color: #343942;
+            cursor: not-allowed;
+        }
+
+        .terminal {
+            background-color: var(--console-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            height: 250px;
+            overflow-y: auto;
+            color: #7ee787;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            background: #21262d;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌐 Port Scanner Web Pro</h1>
+    <p class="desc">Simulatore interattivo di scansione porte e verifica connessione di rete</p>
+
+    <div class="input-group">
+        <input type="text" id="target" value="127.0.0.1" placeholder="Inserisci IP o Dominio (es. 127.0.0.1)">
+        <button id="scanBtn" onclick="avviaScansione()">Avvia Scansione</button>
+    </div>
+
+    <div class="terminal" id="output">In attesa di avvio scansione...\n</div>
+
+    <div class="status" id="status">Pronto</div>
+</div>
+
+<script>
+    const porteComuni = [
+        {porta: 21, servizio: "FTP"},
+        {porta: 22, servizio: "SSH"},
+        {porta: 80, servizio: "HTTP"},
+        {porta: 110, servizio: "POP3"},
+        {porta: 135, servizio: "epmap"},
+        {porta: 143, servizio: "IMAP"},
+        {porta: 443, servizio: "HTTPS"},
+        {porta: 445, servizio: "microsoft-ds"},
+        {porta: 587, servizio: "SMTP (TLS)"},
+        {porta: 993, servizio: "IMAPS"}
+    ];
+
+    async function avviaScansione() {
+        const target = document.getElementById("target").value.trim();
+        const output = document.getElementById("output");
+        const btn = document.getElementById("scanBtn");
+        const status = document.getElementById("status");
+
+        if (!target) {
+            alert("Inserisci un indirizzo valido!");
+            return;
+        }
+
+        btn.disabled = true;
+        output.innerText = `--- Avvio scansione su ${target} (Porte principali) ---\n\n`;
+        status.innerText = "Scansione in corso...";
+        status.style.color = "#e3b341";
+
+        let trovate = 0;
+
+        for (let item of porteComuni) {
+            await new Promise(r => setTimeout(r, 200)); // Simulazione latenza rete
+            
+            // Simula porte aperte per test locale/demo
+            const isAperta = (target === "127.0.0.1" && [135, 445, 80, 443].includes(item.porta)) || Math.random() > 0.6;
+
+            if (isAperta) {
+                output.innerText += `[+] Porta ${item.porta} aperta! -> Servizio: ${item.servizio}\n`;
+                trovate++;
+            }
+            output.scrollTop = output.scrollHeight;
+        }
+
+        output.innerText += `\n--- Scansione completata! Trovate ${trovate} porte aperte. ---\n`;
+        status.innerText = "Scansione Completata!";
+        status.style.color = "#56d364";
+        btn.disabled = false;
+    }
+</script>
+
+</body>
+</html>
